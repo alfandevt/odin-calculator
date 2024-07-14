@@ -2,6 +2,7 @@ const mainDisplayEl = document.querySelector('.display__main');
 const subDisplayEl = document.querySelector('.display__sub');
 const numberButtonEls = document.querySelectorAll('.button__number');
 const numberOperatorEls = document.querySelectorAll('.button__operator');
+const clearButtonEl = document.querySelector('.button__clear');
 
 const evalRegex = /([-\d.]+)\s*([+\-*\/%])\s*([-\d.]+)/;
 
@@ -15,9 +16,6 @@ let strTempNumber2 = '';
 
 let tempOperator = null;
 
-let mainDisplayText = '';
-let subDisplayText = '';
-
 document.addEventListener('DOMContentLoaded', () => {
   numberButtonEls.forEach((btn) => {
     btn.addEventListener('click', onNumberClick);
@@ -26,32 +24,34 @@ document.addEventListener('DOMContentLoaded', () => {
   numberOperatorEls.forEach((btn) => {
     btn.addEventListener('click', onOperatorClick);
   });
+
+  clearButtonEl.addEventListener('click', resetCalculator);
 });
 
 function onNumberClick(event) {
   const numberText = event.target.innerText;
   if (!strTempNumber2 && !tempOperator) {
-    tempNumber1 = numberText;
-    if (tempNumber1 == 0 && !strTempNumber1) {
-      displayToMain(tempNumber1);
+    if ((numberText == 0 && !strTempNumber1) || (result && !strTempNumber1)) {
+      if (result) {
+        clearResult();
+        clearTemps();
+      }
+      strTempNumber1 = numberText;
+      displayToMain(strTempNumber1);
     } else {
-      strTempNumber1 += tempNumber1;
-      mainDisplayText += tempNumber1;
-      displayToMain(mainDisplayText);
+      strTempNumber1 += numberText;
+      displayToMain(strTempNumber1);
     }
   } else if (strTempNumber1 && tempOperator) {
-    tempNumber2 = numberText;
-    if (tempNumber2 == 0 && !strTempNumber2) {
-      displayToMain(tempNumber2);
+    if (numberText == 0 && !strTempNumber2) {
+      strTempNumber2 = numberText;
+      displayToMain(strTempNumber2);
     } else {
-      strTempNumber2 += tempNumber2;
+      strTempNumber2 += numberText;
       displayToMain(strTempNumber2);
     }
   }
-
-  console.log('n1', strTempNumber1);
-  console.log('op', tempOperator);
-  console.log('n2', strTempNumber2);
+  logActivity();
 }
 
 function onOperatorClick(event) {
@@ -63,22 +63,38 @@ function onOperatorClick(event) {
     operatorText !== '='
   ) {
     tempOperator = operatorText;
-    mainDisplayText += tempOperator;
-    subDisplayText = mainDisplayText;
-    displayToSub(subDisplayText);
+    const displayText = strTempNumber1 + tempOperator;
+    displayToSub(displayText);
+    displayToMain();
+  } else if (
+    !isNaN(result) &&
+    !strTempNumber1 &&
+    !strTempNumber2 &&
+    tempOperator === null &&
+    operatorText !== '='
+  ) {
+    strTempNumber1 += result;
+    tempOperator = operatorText;
+    const displayText = strTempNumber1 + tempOperator;
+
+    displayToSub(displayText);
     displayToMain();
   } else if (strTempNumber1 && strTempNumber2 && tempOperator) {
     operate();
   }
+  logActivity();
 }
 
 function operate() {
-  console.log(strTempNumber1, tempOperator, strTempNumber2);
   switch (tempOperator) {
     case '*':
       result = parseInt(strTempNumber1) * parseInt(strTempNumber2);
       break;
     case '/':
+      if (strTempNumber2 == 0) {
+        result = 'Error Divide by Zero!!';
+        break;
+      }
       result = parseInt(strTempNumber1) / parseInt(strTempNumber2);
       break;
     case '+':
@@ -88,11 +104,12 @@ function operate() {
       result = parseInt(strTempNumber1) - parseInt(strTempNumber2);
       break;
     default:
-      result = NaN;
+      result = 'Invalid Operator';
       break;
   }
-  displayToSub(strTempNumber1 + tempOperator + strTempNumber2);
+  displayToSub();
   displayToMain(result);
+  clearTemps();
 }
 
 function displayToSub(text = '') {
@@ -103,7 +120,34 @@ function displayToMain(text = '') {
   mainDisplayEl.innerText = text;
 }
 
-function resetCalculator() {
+function logActivity() {
+  console.log('===================');
+  console.log(new Date().toTimeString());
+  console.log('===================');
+  console.log('n1', strTempNumber1);
+  console.log('op', tempOperator);
+  console.log('n2', strTempNumber2);
+  console.log('===================');
+}
+
+function clearTemps() {
+  strTempNumber1 = '';
+  strTempNumber2 = '';
+
+  tempOperator = null;
+}
+
+function clearDisplay() {
   displayToMain();
   displayToSub();
+}
+
+function clearResult() {
+  result = null;
+}
+
+function resetCalculator() {
+  clearTemps();
+  clearDisplay();
+  clearResult();
 }
