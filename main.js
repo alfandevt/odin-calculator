@@ -3,8 +3,9 @@ const subDisplayEl = document.querySelector('.display__sub');
 const numberButtonEls = document.querySelectorAll('.button__number');
 const numberOperatorEls = document.querySelectorAll('.button__operator');
 const clearButtonEl = document.querySelector('.button__clear');
+const negativeButtonEl = document.querySelector('.button__negative');
 
-const evalRegex = /([-\d.]+)\s*([+\-*\/%])\s*([-\d.]+)/;
+// const evalRegex = /([-\d.]+)\s*([+\-*\/%])\s*([-\d.]+)/;
 
 let result = null;
 
@@ -25,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', onOperatorClick);
   });
 
-  clearButtonEl.addEventListener('click', resetCalculator);
+  clearButtonEl.addEventListener('click', onResetCalculator);
+
+  negativeButtonEl.addEventListener('click', onSwitchNegativePositive);
 });
 
 function onNumberClick(event) {
@@ -51,7 +54,6 @@ function onNumberClick(event) {
       displayToMain(strTempNumber2);
     }
   }
-  logActivity();
 }
 
 function onOperatorClick(event) {
@@ -82,7 +84,6 @@ function onOperatorClick(event) {
   } else if (strTempNumber1 && strTempNumber2 && tempOperator) {
     operate();
   }
-  logActivity();
 }
 
 function operate() {
@@ -112,6 +113,40 @@ function operate() {
   clearTemps();
 }
 
+function onSwitchNegativePositive() {
+  if (strTempNumber1 && tempOperator === null && !strTempNumber2) {
+    if (strTempNumber1.includes('-')) {
+      strTempNumber1 = toPositiveNumberString(strTempNumber1);
+    } else {
+      strTempNumber1 = toNegativeNumberString(strTempNumber1);
+    }
+    displayToMain(strTempNumber1);
+  } else if (strTempNumber1 && tempOperator && strTempNumber2) {
+    if (strTempNumber2.includes('-')) {
+      strTempNumber2 = toPositiveNumberString(strTempNumber2);
+    } else {
+      strTempNumber2 = toNegativeNumberString(strTempNumber2);
+    }
+    displayToMain(strTempNumber2);
+  } else if (!isNaN(result)) {
+    result = result.toString();
+    if (result.includes('-')) {
+      result = toPositiveNumberString(result);
+    } else {
+      result = toNegativeNumberString(result);
+    }
+    displayToMain(result);
+  }
+}
+
+function toNegativeNumberString(numberString) {
+  return `-${numberString}`;
+}
+
+function toPositiveNumberString(numberString) {
+  return numberString.replace('-', '');
+}
+
 function displayToSub(text = '') {
   subDisplayEl.innerText = text;
 }
@@ -122,7 +157,7 @@ function displayToMain(text = '') {
 
 function logActivity() {
   console.log('===================');
-  console.log(new Date().toTimeString());
+  console.log(new Date().toUTCString());
   console.log('===================');
   console.log('n1', strTempNumber1);
   console.log('op', tempOperator);
@@ -146,7 +181,7 @@ function clearResult() {
   result = null;
 }
 
-function resetCalculator() {
+function onResetCalculator() {
   clearTemps();
   clearDisplay();
   clearResult();
