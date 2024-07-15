@@ -5,6 +5,7 @@ const numberOperatorEls = document.querySelectorAll('.button__operator');
 const clearButtonEl = document.querySelector('.button__clear');
 const negativeButtonEl = document.querySelector('.button__negative');
 const percentButtonEl = document.querySelector('.button__percent');
+const dotButtonEl = document.querySelector('.button__dot');
 
 // const evalRegex = /([-\d.]+)\s*([+\-*\/%])\s*([-\d.]+)/;
 
@@ -32,30 +33,69 @@ document.addEventListener('DOMContentLoaded', () => {
   negativeButtonEl.addEventListener('click', onSwitchNegativePositive);
 
   percentButtonEl.addEventListener('click', onPercent);
+
+  dotButtonEl.addEventListener('click', onDotClick);
 });
+
+function onDotClick(event) {
+  const dotText = event.target.innerText;
+  if (!strTempNumber2 && !tempOperator) {
+    if (result && !strTempNumber1) {
+      clearResult();
+      clearTemps();
+      strTempNumber1 = '0' + dotText;
+      displayToMain(strTempNumber1);
+    } else {
+      if (strTempNumber1.includes('.')) {
+        return;
+      }
+
+      if (!strTempNumber1) {
+        strTempNumber1 = '0' + dotText;
+      } else {
+        strTempNumber1 += dotText;
+      }
+      displayToMain(strTempNumber1);
+    }
+  } else if (strTempNumber1 && tempOperator) {
+    if (strTempNumber2.includes('.')) {
+      return;
+    }
+    if (!strTempNumber2) {
+      strTempNumber2 = '0' + dotText;
+    } else {
+      strTempNumber2 += dotText;
+    }
+
+    displayToMain(strTempNumber2);
+  }
+}
 
 function onNumberClick(event) {
   const numberText = event.target.innerText;
   if (!strTempNumber2 && !tempOperator) {
-    if ((numberText == 0 && !strTempNumber1) || (result && !strTempNumber1)) {
-      if (result) {
-        clearResult();
-        clearTemps();
-      }
+    if (result && !strTempNumber1) {
+      clearResult();
+      clearTemps();
       strTempNumber1 = numberText;
       displayToMain(strTempNumber1);
     } else {
       strTempNumber1 += numberText;
+
+      console.log(Number.isSafeInteger(strTempNumber1));
+
+      if (!strTempNumber1.includes('.') && strTempNumber1[0] == 0) {
+        strTempNumber1 = numberText;
+      }
       displayToMain(strTempNumber1);
     }
   } else if (strTempNumber1 && tempOperator) {
-    if (numberText == 0 && !strTempNumber2) {
+    strTempNumber2 += numberText;
+
+    if (!strTempNumber2.includes('.') && strTempNumber2[0] == 0) {
       strTempNumber2 = numberText;
-      displayToMain(strTempNumber2);
-    } else {
-      strTempNumber2 += numberText;
-      displayToMain(strTempNumber2);
     }
+    displayToMain(strTempNumber2);
   }
 }
 
