@@ -70,9 +70,10 @@ main {
   justify-content: space-around;
   align-items: flex-end;
   flex-direction: column;
-  padding-right: 0.3rem;
   background-color: #d1e9bc;
   color: #1f2320;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow: hidden;
 }
 
 .calculator__button {
@@ -95,13 +96,22 @@ main {
   background-color: rgba(154, 37, 8, 0.859);
 }
 
+.display__sub,
+.display__main {
+  margin: 0;
+  max-width: 100%;
+  text-overflow: clip;
+  padding-left: 0.6rem;
+  padding-right: 0.6rem;
+}
+
 .display__sub {
   font-size: 1.1rem;
   height: 1.4rem;
 }
 
 .display__main {
-  font-size: 2rem;
+  font-size: 1.6rem;
   height: 2.2rem;
 }
 

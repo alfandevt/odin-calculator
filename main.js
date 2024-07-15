@@ -1,3 +1,4 @@
+const calculatorEl = document.querySelector('.calculator');
 const mainDisplayEl = document.querySelector('.display__main');
 const subDisplayEl = document.querySelector('.display__sub');
 const numberButtonEls = document.querySelectorAll('.button__number');
@@ -33,12 +34,40 @@ document.addEventListener('DOMContentLoaded', () => {
   dotButtonEl.addEventListener('click', onDotClick);
 
   backspaceButtonEl.addEventListener('click', onBackspace);
+
+  document.addEventListener('keydown', onKeydown);
 });
+
+function onKeydown(event) {
+  onNumberClick(event);
+  onOperatorClick(event);
+  onDotClick(event);
+  onKeydownUtilOps(event);
+}
+
+function onKeydownUtilOps(event) {
+  switch (event.key) {
+    case 'Escape':
+      onResetCalculator();
+      break;
+    case '%':
+      onPercent();
+      break;
+    case 'Backspace':
+      onBackspace();
+      break;
+    case 'm':
+      onSwitchNegativePositive();
+      break;
+
+    default:
+      return false;
+  }
+}
 
 function onBackspace() {
   if (strTempNumber1 && !tempOperator) {
     strTempNumber1 = strTempNumber1.slice(0, strTempNumber1.length - 1);
-
     displayToMain(strTempNumber1);
   } else if (strTempNumber1 && tempOperator) {
     if (strTempNumber2) {
@@ -57,7 +86,17 @@ function onBackspace() {
 }
 
 function onDotClick(event) {
-  const dotText = event.target.innerText;
+  let dotText = '';
+  if (event.type === 'click') {
+    dotText = event.target.innerText;
+  } else if (event.type === 'keydown') {
+    if (event.key === '.') {
+      dotText = '.';
+    } else {
+      return false;
+    }
+  }
+
   if (!strTempNumber2 && !tempOperator) {
     if (result && !strTempNumber1) {
       clearResult();
@@ -91,7 +130,13 @@ function onDotClick(event) {
 }
 
 function onNumberClick(event) {
-  const numberText = event.target.innerText;
+  let numberText = '';
+  if (event.type === 'click') {
+    numberText = event.target.innerText;
+  } else if (event.type === 'keydown') {
+    numberText = numberKeyMap(event);
+    if (!numberText) return;
+  }
   if (!strTempNumber2 && !tempOperator) {
     if (result && !strTempNumber1) {
       clearResult();
@@ -117,7 +162,13 @@ function onNumberClick(event) {
 }
 
 function onOperatorClick(event) {
-  const operatorText = event.target.innerText;
+  let operatorText = '';
+  if (event.type === 'click') {
+    operatorText = event.target.innerText;
+  } else if (event.type === 'keydown') {
+    operatorText = operatorKeyMap(event);
+    if (!operatorText) return;
+  }
   if (
     strTempNumber1 &&
     !strTempNumber2 &&
@@ -144,6 +195,51 @@ function onOperatorClick(event) {
     clearResult();
   } else if (strTempNumber1 && strTempNumber2 && tempOperator) {
     operate();
+  }
+}
+
+function numberKeyMap(event) {
+  switch (event.key) {
+    case '1':
+      return '1';
+    case '2':
+      return '2';
+    case '3':
+      return '3';
+    case '4':
+      return '4';
+    case '5':
+      return '5';
+    case '6':
+      return '6';
+    case '7':
+      return '7';
+    case '8':
+      return '8';
+    case '9':
+      return '9';
+    case '0':
+      return '0';
+    default:
+      return false;
+  }
+}
+
+function operatorKeyMap(event) {
+  switch (event.key) {
+    case '/':
+      return '/';
+    case '*':
+      return '*';
+    case '-':
+      return '-';
+    case '+':
+      return '+';
+    case '=':
+    case 'Enter':
+      return '=';
+    default:
+      return false;
   }
 }
 
