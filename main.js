@@ -8,8 +8,6 @@ const percentButtonEl = document.querySelector('.button__percent');
 const dotButtonEl = document.querySelector('.button__dot');
 const backspaceButtonEl = document.querySelector('.button__backspace');
 
-// const evalRegex = /([-\d.]+)\s*([+\-*\/%])\s*([-\d.]+)/;
-
 let result = null;
 
 let strTempNumber1 = '';
@@ -141,8 +139,6 @@ function onOperatorClick(event) {
     strTempNumber1 += result;
     tempOperator = operatorText;
     const displayText = strTempNumber1 + tempOperator;
-    console.log('here');
-
     displayToSub(displayText);
     displayToMain();
     clearResult();
