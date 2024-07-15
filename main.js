@@ -6,13 +6,11 @@ const clearButtonEl = document.querySelector('.button__clear');
 const negativeButtonEl = document.querySelector('.button__negative');
 const percentButtonEl = document.querySelector('.button__percent');
 const dotButtonEl = document.querySelector('.button__dot');
+const backspaceButtonEl = document.querySelector('.button__backspace');
 
 // const evalRegex = /([-\d.]+)\s*([+\-*\/%])\s*([-\d.]+)/;
 
 let result = null;
-
-let tempNumber1 = null;
-let tempNumber2 = null;
 
 let strTempNumber1 = '';
 let strTempNumber2 = '';
@@ -35,7 +33,30 @@ document.addEventListener('DOMContentLoaded', () => {
   percentButtonEl.addEventListener('click', onPercent);
 
   dotButtonEl.addEventListener('click', onDotClick);
+
+  backspaceButtonEl.addEventListener('click', onBackspace);
 });
+
+function onBackspace() {
+  if (strTempNumber1 && !tempOperator) {
+    strTempNumber1 = strTempNumber1.slice(0, strTempNumber1.length - 1);
+
+    displayToMain(strTempNumber1);
+  } else if (strTempNumber1 && tempOperator) {
+    if (strTempNumber2) {
+      strTempNumber2 = strTempNumber2.slice(0, strTempNumber2.length - 1);
+      displayToMain(strTempNumber2);
+    } else {
+      tempOperator = null;
+      displayToSub();
+      displayToMain(strTempNumber1);
+    }
+  }
+
+  if (result) {
+    onResetCalculator();
+  }
+}
 
 function onDotClick(event) {
   const dotText = event.target.innerText;
@@ -153,8 +174,13 @@ function operate() {
       break;
   }
 
-  if (!Number.isSafeInteger(result) && decimalLengthStringCheck(result, 2)) {
-    result = result.toPrecision(4);
+  if (!Number.isSafeInteger(result) && !isNaN(result)) {
+    let resultNumLength = result.toString().split('.')[0].length;
+    if (resultNumLength < 3) {
+      result = result.toPrecision(4);
+    } else {
+      result = result.toPrecision(6);
+    }
   }
 
   result = result.toString();
@@ -213,10 +239,6 @@ function onPercent() {
     result = toPercent(result);
     displayToMain(result);
   }
-}
-
-function decimalLengthStringCheck(numberString, decimalLength = 2) {
-  return numberString.toString().split('.')[1].length >= decimalLength;
 }
 
 function displayToSub(text = '') {

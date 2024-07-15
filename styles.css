@@ -60,6 +60,6 @@ main {
     align-items: center;
 }
 
-.calculator__button.button__zero {
+/* .calculator__button.button__zero {
     grid-column: 1 / span 2;
-}
+} */
