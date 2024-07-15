@@ -4,6 +4,7 @@ const numberButtonEls = document.querySelectorAll('.button__number');
 const numberOperatorEls = document.querySelectorAll('.button__operator');
 const clearButtonEl = document.querySelector('.button__clear');
 const negativeButtonEl = document.querySelector('.button__negative');
+const percentButtonEl = document.querySelector('.button__percent');
 
 // const evalRegex = /([-\d.]+)\s*([+\-*\/%])\s*([-\d.]+)/;
 
@@ -29,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
   clearButtonEl.addEventListener('click', onResetCalculator);
 
   negativeButtonEl.addEventListener('click', onSwitchNegativePositive);
+
+  percentButtonEl.addEventListener('click', onPercent);
 });
 
 function onNumberClick(event) {
@@ -69,6 +72,7 @@ function onOperatorClick(event) {
     displayToSub(displayText);
     displayToMain();
   } else if (
+    result &&
     !isNaN(result) &&
     !strTempNumber1 &&
     !strTempNumber2 &&
@@ -81,6 +85,7 @@ function onOperatorClick(event) {
 
     displayToSub(displayText);
     displayToMain();
+    clearResult();
   } else if (strTempNumber1 && strTempNumber2 && tempOperator) {
     operate();
   }
@@ -89,25 +94,30 @@ function onOperatorClick(event) {
 function operate() {
   switch (tempOperator) {
     case '*':
-      result = parseInt(strTempNumber1) * parseInt(strTempNumber2);
+      result = parseFloat(strTempNumber1) * parseFloat(strTempNumber2);
       break;
     case '/':
       if (strTempNumber2 == 0) {
         result = 'Error Divide by Zero!!';
         break;
       }
-      result = parseInt(strTempNumber1) / parseInt(strTempNumber2);
+      result = parseFloat(strTempNumber1) / parseFloat(strTempNumber2);
       break;
     case '+':
-      result = parseInt(strTempNumber1) + parseInt(strTempNumber2);
+      result = parseFloat(strTempNumber1) + parseFloat(strTempNumber2);
       break;
     case '-':
-      result = parseInt(strTempNumber1) - parseInt(strTempNumber2);
+      result = parseFloat(strTempNumber1) - parseInt(strTempNumber2);
       break;
     default:
       result = 'Invalid Operator';
       break;
   }
+
+  if (!Number.isSafeInteger(result) && decimalLengthStringCheck(result, 2)) {
+    result = result.toPrecision(2);
+  }
+
   displayToSub();
   displayToMain(result);
   clearTemps();
@@ -128,7 +138,7 @@ function onSwitchNegativePositive() {
       strTempNumber2 = toNegativeNumberString(strTempNumber2);
     }
     displayToMain(strTempNumber2);
-  } else if (!isNaN(result)) {
+  } else if (result && !isNaN(result)) {
     result = result.toString();
     if (result.includes('-')) {
       result = toPositiveNumberString(result);
@@ -147,6 +157,28 @@ function toPositiveNumberString(numberString) {
   return numberString.replace('-', '');
 }
 
+function toPercent(numberString) {
+  return parseFloat(numberString) / 100;
+}
+
+function onPercent() {
+  if (strTempNumber1 && tempOperator === null && !strTempNumber2) {
+    strTempNumber1 = toPercent(strTempNumber1);
+    displayToMain(strTempNumber1);
+  } else if (strTempNumber1 && tempOperator && strTempNumber2) {
+    strTempNumber2 = toPercent(strTempNumber2);
+    displayToMain(strTempNumber2);
+  } else if (result && !isNaN(result)) {
+    result = result.toString();
+    result = toPercent(result);
+    displayToMain(result);
+  }
+}
+
+function decimalLengthStringCheck(numberString, decimalLength = 2) {
+  return numberString.toString().split('.')[1].length >= decimalLength;
+}
+
 function displayToSub(text = '') {
   subDisplayEl.innerText = text;
 }
@@ -162,6 +194,8 @@ function logActivity() {
   console.log('n1', strTempNumber1);
   console.log('op', tempOperator);
   console.log('n2', strTempNumber2);
+  console.log('===================');
+  console.log('result', result);
   console.log('===================');
 }
 
