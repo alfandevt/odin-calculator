@@ -82,8 +82,6 @@ function onNumberClick(event) {
     } else {
       strTempNumber1 += numberText;
 
-      console.log(Number.isSafeInteger(strTempNumber1));
-
       if (!strTempNumber1.includes('.') && strTempNumber1[0] == 0) {
         strTempNumber1 = numberText;
       }
@@ -122,6 +120,7 @@ function onOperatorClick(event) {
     strTempNumber1 += result;
     tempOperator = operatorText;
     const displayText = strTempNumber1 + tempOperator;
+    console.log('here');
 
     displayToSub(displayText);
     displayToMain();
@@ -155,9 +154,10 @@ function operate() {
   }
 
   if (!Number.isSafeInteger(result) && decimalLengthStringCheck(result, 2)) {
-    result = result.toPrecision(2);
+    result = result.toPrecision(4);
   }
 
+  result = result.toString();
   displayToSub();
   displayToMain(result);
   clearTemps();
