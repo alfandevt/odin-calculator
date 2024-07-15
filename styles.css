@@ -6,6 +6,7 @@ body {
 
 body {
   font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 main {
@@ -15,7 +16,11 @@ main {
   width: 100vw;
   height: 100vh;
   box-sizing: border-box;
+  gap: 1.4rem;
   background-color: #330544;
+  flex-wrap: wrap-reverse;
+  overflow: hidden;
+  position: relative;
 }
 
 .calculator {
@@ -72,7 +77,6 @@ main {
   flex-direction: column;
   background-color: #d1e9bc;
   color: #1f2320;
-  font-family: Arial, Helvetica, sans-serif;
   overflow: hidden;
 }
 
@@ -83,8 +87,11 @@ main {
   box-shadow: 0px 0px 2px 1px rgba(254, 254, 238, 0.783);
 }
 
-.calculator__button:active {
+.calculator__button:hover {
   transform: scale(0.96);
+}
+.calculator__button:active {
+  transform: scale(0.93);
 }
 
 .button__number {
@@ -118,6 +125,32 @@ main {
 .calculator__button {
   justify-content: center;
   align-items: center;
+}
+
+.guide {
+  color: #fefeee;
+  padding: 1rem;
+  transition: transform 0.2s linear, opacity 0.2s linear;
+  opacity: 1;
+}
+
+.guide.guide--hide {
+  display: none;
+}
+
+.guide__button {
+  padding: 1rem;
+  font-size: 1.2rem;
+  background-color: #f4cb12;
+  color: #020202;
+}
+
+.guide__source-link {
+  color: #736ffe;
+}
+
+.guide__source-link:visited {
+  color: #ab2fd8;
 }
 
 @keyframes rgb-background {

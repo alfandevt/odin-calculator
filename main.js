@@ -8,6 +8,8 @@ const negativeButtonEl = document.querySelector('.button__negative');
 const percentButtonEl = document.querySelector('.button__percent');
 const dotButtonEl = document.querySelector('.button__dot');
 const backspaceButtonEl = document.querySelector('.button__backspace');
+const guideSectionEl = document.querySelector('.guide');
+const guideButtonEl = document.querySelector('.guide__button');
 
 let result = null;
 
@@ -35,8 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   backspaceButtonEl.addEventListener('click', onBackspace);
 
+  guideButtonEl.addEventListener('click', onGuideButtonClick);
+
   document.addEventListener('keydown', onKeydown);
 });
+
+function onGuideButtonClick() {
+  guideSectionEl.classList.add('guide--hide');
+}
 
 function onKeydown(event) {
   onNumberClick(event);
