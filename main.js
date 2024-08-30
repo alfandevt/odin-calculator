@@ -20,12 +20,7 @@ let tempOperator = null;
 
 // Register Service Worker
 if ('serviceWorker' in navigator) {
-  document.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('./ServiceWorker.js')
-      .then((_) => console.log('Service Worker: Registered'))
-      .catch((ex) => console.log(`Service Worker: Error:${ex}`));
-  });
+  navigator.serviceWorker.register('sw.js', { scope: './' });
 }
 
 document.addEventListener('DOMContentLoaded', () => {

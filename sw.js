@@ -1,23 +1,25 @@
 const cacheName = 'RGB Calculator';
-const cacheAsset = ['index.html', 'style.css', 'main.js'];
+const cacheAsset = [
+  './',
+  './index.html',
+  './styles.css',
+  './main.js',
+  './manifest.json',
+];
 
 self.addEventListener('install', (evt) => {
-  console.log('Service Worker: Installed');
-
   evt.waitUntil(
     caches
       .open(cacheName)
       .then((cache) => {
         console.log('Service Worker: Caching Files');
-        cache.addAll(cacheAsset);
+        return cache.addAll(cacheAsset);
       })
       .then(() => self.skipWaiting())
   );
 });
 
 self.addEventListener('activate', (evt) => {
-  console.log('Service Worker: Activated');
-
   evt.waitUntil(
     caches.keys().then((cacheName) => {
       return Promise.all(
@@ -32,7 +34,13 @@ self.addEventListener('activate', (evt) => {
   );
 });
 
-self.addEventListener('fetch', (evt) => {
-  console.log('Service Worker: Fetching');
-  e.respondWith(fetch(evt.request).catch(() => caches.match(e.request)));
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches
+      .open(cacheName)
+      .then((cache) => cache.match(event.request, { ignoreSearch: true }))
+      .then((response) => {
+        return response || fetch(event.request);
+      })
+  );
 });
