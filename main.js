@@ -18,6 +18,16 @@ let strTempNumber2 = '';
 
 let tempOperator = null;
 
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+  document.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('./ServiceWorker.js')
+      .then((_) => console.log('Service Worker: Registered'))
+      .catch((ex) => console.log(`Service Worker: Error:${ex}`));
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   numberButtonEls.forEach((btn) => {
     btn.addEventListener('click', onNumberClick);
