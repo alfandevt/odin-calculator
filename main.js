@@ -56,6 +56,7 @@ function onKeydown(event) {
   onOperatorClick(event);
   onDotClick(event);
   onKeydownUtilOps(event);
+  event.target.blur();
 }
 
 function onKeydownUtilOps(event) {
